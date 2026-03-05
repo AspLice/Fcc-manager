@@ -1,6 +1,8 @@
+/// <reference path="./types/global.d.ts" />
 import React, { useState, useEffect } from 'react';
 import { TitleBar } from './components/TitleBar';
-import { FolderOpen, Settings, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { FolderOpen, Settings, Play, RefreshCw } from 'lucide-react';
+import Toast, { ToastMessage, ToastType } from './components/Toast';
 
 interface Pack {
     name: string;
@@ -11,9 +13,10 @@ function App() {
     const [fivemPath, setFivemPath] = useState<string>('');
     const [packs, setPacks] = useState<Pack[]>([]);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ text: '', type: '' });
+    const [toasts, setToasts] = useState<ToastMessage[]>([]);
     const [applying, setApplying] = useState<string | null>(null);
     const [currentTheme, setCurrentTheme] = useState<string>('ocean');
+    const [hoverTheme, setHoverTheme] = useState<string | null>(null);
 
     // Load saved path and theme on mount
     useEffect(() => {
@@ -32,16 +35,28 @@ function App() {
         }
     }, []);
 
+    // Apply preview theme when hovering, revert when not
+    useEffect(() => {
+        if (hoverTheme) {
+            document.documentElement.setAttribute('data-theme', hoverTheme);
+        } else {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+    }, [hoverTheme, currentTheme]);
+
     const changeTheme = (theme: string) => {
         setCurrentTheme(theme);
         localStorage.setItem('fcc_theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
         showMessage('テーマを変更しました。', 'success');
     };
 
-    const showMessage = (text: string, type: 'success' | 'error' | 'info') => {
-        setMessage({ text, type });
-        setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+    const showMessage = (message: string, type: ToastType) => {
+        const id = Date.now() + Math.random();
+        setToasts((prev) => [...prev, { id, type, message }]);
+    };
+
+    const removeToast = (id: number) => {
+        setToasts((prev) => prev.filter(t => t.id !== id));
     };
 
     const handleSelectFolder = async () => {
@@ -101,6 +116,23 @@ function App() {
         }
     };
 
+    const handleLaunchFiveM = async () => {
+        if (!window.electronAPI) return;
+        setApplying('launching');
+        try {
+            const result = await window.electronAPI.launchFiveM();
+            if (result.success) {
+                showMessage(result.message, 'info');
+            } else {
+                showMessage(result.message, 'error');
+            }
+        } catch (error: any) {
+            showMessage(`起動エラー: ${error.message}`, 'error');
+        } finally {
+            setApplying(null);
+        }
+    };
+
     return (
         <div className="h-screen w-screen flex flex-col bg-app-base overflow-hidden text-app-text transition-colors duration-300">
             <TitleBar />
@@ -116,18 +148,16 @@ function App() {
                         </h1>
                         <p className="text-sm text-app-muted mt-1">FiveM Citizen 統合管理ツール</p>
                     </div>
+                    <button
+                        onClick={handleLaunchFiveM}
+                        disabled={applying !== null}
+                        className="bg-app-primary hover:bg-app-primary-hover text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-bold transition-all shadow-lg disabled:opacity-50 hover:scale-105 active:scale-95"
+                    >
+                        <Play size={18} fill="currentColor" /> FiveMを起動
+                    </button>
                 </header>
 
-                {/* Global Messages */}
-                {message.text && (
-                    <div className={`p-4 rounded-lg flex items-center gap-3 border ${message.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' :
-                        message.type === 'error' ? 'bg-red-500/10 border-red-500/50 text-red-400' :
-                            'bg-blue-500/10 border-blue-500/50 text-blue-400'
-                        }`}>
-                        {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-                        <span className="text-sm font-medium">{message.text}</span>
-                    </div>
-                )}
+                <Toast toasts={toasts} removeToast={removeToast} />
 
                 {/* Setup & Theme Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -176,9 +206,11 @@ function App() {
                                 <button
                                     key={theme.id}
                                     onClick={() => changeTheme(theme.id)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${currentTheme === theme.id
-                                            ? 'bg-app-primary text-white shadow-lg'
-                                            : 'bg-app-base text-app-muted hover:text-app-text border border-app-border'
+                                    onMouseEnter={() => setHoverTheme(theme.id)}
+                                    onMouseLeave={() => setHoverTheme(null)}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${currentTheme === theme.id
+                                        ? 'bg-app-primary text-white shadow-lg scale-105'
+                                        : 'bg-app-base text-app-muted hover:text-app-text border border-app-border hover:border-app-primary/50'
                                         }`}
                                 >
                                     {theme.name}

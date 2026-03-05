@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs').promises;
+const { exec } = require('child_process');
 
 // The built directory structure
 //
@@ -176,6 +177,27 @@ ipcMain.handle('fs:applyPack', async (_, fivemAppDataPath, packName) => {
 
   } catch (error) {
     console.error("Failed to apply pack:", error);
-    return { success: false, message: `エラーが発生しました: ${error.message}` };
+    let errorMsg = `エラーが発生しました: ${error.message}`;
+    if (error.code === 'EPERM' || error.message.includes('クライアントは要求された特権を保持していません')) {
+      errorMsg = '【権限エラー】バニラ復元時のシンボリックリンク削除や作成に失敗しました。FiveMを完全に終了しているか確認してください。それでも直らない場合はこのアプリ（FCC）を管理者権限で再起動してください。';
+    } else if (error.code === 'EBUSY') {
+      errorMsg = '【ファイルロック】ディレクトリが別のプロセス（おそらく起動中のFiveM本体など）によって使用されています。FiveMを完全に終了してから再度お試しください。';
+    }
+    return { success: false, message: errorMsg };
   }
+});
+
+// Launch FiveM implicitly
+ipcMain.handle('app:launchFiveM', async () => {
+  return new Promise((resolve) => {
+    // WindowsのURLプロトコルハンドラを使用してFiveMプロセスを呼び出す（環境に依存しない最も安全な方法）
+    exec('start fivem://', (error) => {
+      if (error) {
+        console.error("Failed to launch FiveM:", error);
+        resolve({ success: false, message: 'FiveMの自動起動に失敗しました。スタートメニューから手動で起動してください。' });
+      } else {
+        resolve({ success: true, message: 'FiveMを起動しています...' });
+      }
+    });
+  });
 });

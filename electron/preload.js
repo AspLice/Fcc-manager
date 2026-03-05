@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getPacks: (path) => ipcRenderer.invoke('fs:getPacks', path),
     checkExists: (path) => ipcRenderer.invoke('fs:exists', path),
     applyPack: (basePath, packName) => ipcRenderer.invoke('fs:applyPack', basePath, packName),
+    launchFiveM: () => ipcRenderer.invoke('app:launchFiveM'),
     windowMinimize: () => ipcRenderer.send('window-min'),
     windowMaximize: () => ipcRenderer.send('window-max'),
     windowClose: () => ipcRenderer.send('window-close'),

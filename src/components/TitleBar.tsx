@@ -1,3 +1,4 @@
+/// <reference path="../types/global.d.ts" />
 import React from 'react';
 import { Minus, Square, X } from 'lucide-react';
 
