@@ -22,6 +22,8 @@ jobs:
       run: npm install
       
     - name: Build executable
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run electron:build
       
     - name: Upload artifact
