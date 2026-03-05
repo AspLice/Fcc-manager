@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: theme('colors.slate.900');
+    --bg-panel: theme('colors.slate.800');
+    --bg-panel-hover: theme('colors.slate.700');
+    --text-base: theme('colors.slate.200');
+    --text-muted: theme('colors.slate.400');
+    --border-base: theme('colors.slate.700');
+    
+    --primary: theme('colors.cyan.500');
+    --primary-hover: theme('colors.cyan.400');
+    --primary-glow: theme('colors.cyan.600');
+    --primary-gradient-start: theme('colors.cyan.600');
+    --primary-gradient-end: theme('colors.blue.600');
+  }
+
+  [data-theme='crimson'] {
+    --bg-base: theme('colors.zinc.950');
+    --bg-panel: theme('colors.zinc.900');
+    --bg-panel-hover: theme('colors.zinc.800');
+    --text-base: theme('colors.zinc.100');
+    --text-muted: theme('colors.zinc.400');
+    --border-base: theme('colors.red.900');
+    
+    --primary: theme('colors.red.600');
+    --primary-hover: theme('colors.red.500');
+    --primary-glow: theme('colors.red.700');
+    --primary-gradient-start: theme('colors.red.700');
+    --primary-gradient-end: theme('colors.rose.700');
+  }
+
+  [data-theme='hacker'] {
+    --bg-base: #000000;
+    --bg-panel: #0a0a0a;
+    --bg-panel-hover: #171717;
+    --text-base: theme('colors.green.500');
+    --text-muted: theme('colors.green.700');
+    --border-base: theme('colors.green.900');
+    
+    --primary: theme('colors.green.400');
+    --primary-hover: theme('colors.green.300');
+    --primary-glow: theme('colors.green.800');
+    --primary-gradient-start: theme('colors.green.600');
+    --primary-gradient-end: theme('colors.emerald.800');
+  }
+
+  [data-theme='midnight'] {
+    --bg-base: theme('colors.indigo.950');
+    --bg-panel: theme('colors.indigo.900');
+    --bg-panel-hover: theme('colors.indigo.800');
+    --text-base: theme('colors.indigo.100');
+    --text-muted: theme('colors.indigo.300');
+    --border-base: theme('colors.indigo.700');
+    
+    --primary: theme('colors.fuchsia.500');
+    --primary-hover: theme('colors.fuchsia.400');
+    --primary-glow: theme('colors.fuchsia.700');
+    --primary-gradient-start: theme('colors.fuchsia.600');
+    --primary-gradient-end: theme('colors.purple.600');
+  }
+
+  [data-theme='sunlight'] {
+    --bg-base: theme('colors.stone.100');
+    --bg-panel: theme('colors.white');
+    --bg-panel-hover: theme('colors.stone.50');
+    --text-base: theme('colors.stone.800');
+    --text-muted: theme('colors.stone.500');
+    --border-base: theme('colors.stone.300');
+    
+    --primary: theme('colors.amber.500');
+    --primary-hover: theme('colors.amber.400');
+    --primary-glow: theme('colors.amber.300');
+    --primary-gradient-start: theme('colors.amber.500');
+    --primary-gradient-end: theme('colors.orange.500');
+  }
+
+  body {
+    @apply font-sans antialiased overflow-hidden select-none bg-app-base text-app-text;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-app-panel-hover rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-app-border;
+}
+
+/* Draggable Top Bar for Electron */
+.draggable {
+  -webkit-app-region: drag;
+}
+
+.non-draggable {
+  -webkit-app-region: no-drag;
+}

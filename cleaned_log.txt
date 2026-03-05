@@ -1,0 +1,17 @@
+od = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+    
+    
+    Sub items Errors: 2
+    
+    Archives with Errors: 1
+    
+    Sub items Errors: 2
+    
+                    errorOut=ERROR: Cannot create symbolic link : �N���C�A���g�͗v�����ꂽ������ۗL���Ă��܂���B : C:\Users\tkznn\AppData\Local\electron-builder\Cache\winCodeSign\280869999\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : �N���C�A���g�͗v�����ꂽ������ۗL���Ă��܂���B : C:\Users\tkznn\AppData\Local\electron-builder\Cache\winCodeSign\280869999\darwin\10.12\lib\libssl.dylib
+    
+                    command='C:\Users\tkznn\.gemini\antigravity\scratch\FCC\node_modules\7zip-bin\win\x64\7za.exe' x -bd 'C:\Users\tkznn\AppData\Local\electron-builder\Cache\winCodeSign\280869999.7z' '-oC:\Users\tkznn\AppData\Local\electron-builder\Cache\winCodeSign\280869999'
+                    workingDir=C:\Users\tkznn\AppData\Local\electron-builder\Cache\winCodeSign
+  • Above command failed, retrying 0 more times
